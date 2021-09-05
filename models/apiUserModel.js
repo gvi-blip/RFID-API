@@ -1,22 +1,23 @@
 const query = require('../utilities/promisifyQuery');
 
 const API_USER_MODEL = {
-  apiUserId: 'uId INT AUTO_INCREMENT PRIMARY KEY',
+  apiUserId: 'uId INT AUTO_INCREMENT PRIMARY KEY,',
   emailId: 'emailId VARCHAR(255) NOT NULL UNIQUE,',
   password: 'password VARCHAR(255) NOT NULL ,',
-  status: 'status VARCHAR(10) DEFAULT "unreg"',
+  status: 'status VARCHAR(10) DEFAULT "unreg",',
   userKey: 'userKey VARCHAR(255) NOT NULL UNIQUE'
 };
 
-exports.createNewUserTable = async (Id) => {
+exports.createNewAPIUsersTable = async () => {
   try {
     let queryStringFields = '';
     for (const field in API_USER_MODEL) {
       queryStringFields += `${API_USER_MODEL[field]}`;
     }
-    const queryString = `CREATE TABLE UD${Id} (${queryStringFields})`;
+    const queryString = `CREATE TABLE APIUSERS (${queryStringFields})`;
     const results = await query(queryString);
     if (results) {
+      console.log('done');
       return true;
     }
   } catch (err) {

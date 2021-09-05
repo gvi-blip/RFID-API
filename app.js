@@ -16,10 +16,10 @@ app.use(express.json());
 app.use(express.Router());
 app.use(morgan('dev'));
 
-app.use('/api/v1/appuser', userRouter);
-app.use('/api/v1/user', apiuserRouter);
-app.use('api/v1/log', logRouter);
-app.use('api/v1/accesspoints', accessRouter);
+app.use('/api/v1/user', authController.protect, userRouter);
+app.use('/api/v1/apiuser', apiuserRouter);
+app.use('/api/v1/log', logRouter);
+app.use('/api/v1/accesspoints', accessRouter);
 
 app.use(globalErrorController);
 

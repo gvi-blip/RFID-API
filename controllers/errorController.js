@@ -31,6 +31,9 @@ const handleTableExistingError = () => {
   return new AppError('Does not exist', 403);
 };
 
+const handleDuplicateEntryError = () => {
+  return new AppError('This data already exists.', 403);
+};
 module.exports = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
@@ -40,6 +43,7 @@ module.exports = (err, req, res, next) => {
     let error = { ...err }; //So a hard copy is created
     console.log(error);
     if (error.code === 'ER_NO_SUCH_TABLE') error = handleTableExistingError();
+    if (error.code === 'ER_DUP_ENTRY') error = handleDuplicateEntryError();
 
     sendErrorProd(error, res);
   } else {

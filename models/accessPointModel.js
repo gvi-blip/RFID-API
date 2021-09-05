@@ -1,7 +1,7 @@
 const query = require('../utilities/promisifyQuery');
 
 const ACCESS_POINT_MODEL = {
-  apId: 'apId INT AUTO_INCREMENT PRIMARY KEY',
+  apId: 'apId INT AUTO_INCREMENT PRIMARY KEY,',
   name: 'name VARCHAR(50),',
   allowed: 'allowed VARCHAR(255)'
 };

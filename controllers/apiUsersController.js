@@ -5,7 +5,7 @@ const validator = require('validator');
 const catchAsync = require('../utilities/catchAsync');
 const query = require('../utilities/promisifyQuery');
 const AppError = require('../utilities/appError');
-const sendEmail = require('../thirdpartyservices/emails/sendgrid');
+const { sendEmail } = require('../thirdpartyservices/emails/sendgrid');
 const apiUserModel = require('../models/apiUserModel');
 const userModel = require('../models/userModel');
 const apModel = require('../models/accessPointModel');
@@ -30,8 +30,11 @@ exports.registerUser = catchAsync(async (req, res, next) => {
   await query(queryString);
 
   //Send the complete registeration link with userKey in req.params
-  const msgContent = `Click on the link to register your application./nUser Key: ${userKey}/n Make sure no one can access this key. All requests to our API from your application will contain this key./n ${process.env.completeRegisterationURL}/${userKey}`;
-  sendEmail(msgContent, req.body.emailId); //Can also send html button
+  const msgContent = {
+    subject: 'API Registeration',
+    text: `Click on the link to register your application.User Key: ${userKey}/n Make sure no one can access this key. All requests to our API from your application will contain this key. ${process.env.completeRegisterationURL}/${userKey}`
+  };
+  sendEmail(msgContent, req.body.email); //Can also send html button
 
   //Send response
   res.status(200).json({
@@ -43,25 +46,27 @@ exports.registerUser = catchAsync(async (req, res, next) => {
 
 exports.completeRegistration = catchAsync(async (req, res, next) => {
   //MGet user key from database
-  let queryString = `SELECT status FROM APIUSERS WHERE userKey = '${req.params.userKey}'`;
+  let queryString = `SELECT status,uId FROM APIUSERS WHERE userKey = '${req.params.userKey}'`;
   const results = await query(queryString);
+  req.body.apiUserId = results[0].uId;
 
   //Check if status is unreg
   if (results[0].status === 'unreg') {
-    queryString = `INSERT INTO APIUSERS(status) VALUES ('reg') WHERE userKey = '${req.params.userKey}`;
+    queryString = `UPDATE APIUSERS SET status='reg' WHERE userKey = '${req.params.userKey}'`;
     await query(queryString);
     next();
+  } else {
+    return next(new AppError('You are already registered', 400));
   }
 
   //If registered
-  return next(new AppError('You are already registered', 400));
 });
 
 exports.createTables = catchAsync(async (req, res, next) => {
   //apiUserId will be available from autcontroller.protect
-  const check1 = userModel.createNewUserTable(req.body.apiUserId);
-  const check2 = apModel.createNewAccessPointTable(req.body.apiUserId);
-  const check3 = logsModel.createNewLogTable(req.body.apiUserId);
+  const check1 = await userModel.createNewUserTable(req.body.apiUserId);
+  const check2 = await apModel.createNewAccessPointTable(req.body.apiUserId);
+  const check3 = await logsModel.createNewLogTable(req.body.apiUserId);
 
   if (check1 && check2 && check3) {
     res.status(200).json({

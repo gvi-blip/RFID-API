@@ -22,7 +22,7 @@ app.use('api/v1/apiuser', apiuserRouter);
 app.use('api/v1/log', authController.protect, logRouter);
 app.use('api/v1/accesspoints', authController.protect, accessRouter);
 
-app('*', (req, res, next) => {
+app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server`), 404);
 });
 

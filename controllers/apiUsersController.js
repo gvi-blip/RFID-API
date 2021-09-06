@@ -32,7 +32,7 @@ exports.registerUser = catchAsync(async (req, res, next) => {
   //Send the complete registeration link with userKey in req.params
   const msgContent = {
     subject: 'API Registeration',
-    text: `Click on the link to register your application.User Key: ${userKey} Make sure no one can access this key. All requests to our API from your application will contain this key. ${process.env.completeRegisterationURL}/${userKey}`
+    text: `Click on the link to register your application.User Key: ${userKey} Make sure no one can access this key. All requests to our API from your application will contain this key.  https://rfid-sec-setup.herokuapp.com/api/v1/user/register/${userKey}`
   };
   sendEmail(msgContent, req.body.email); //Can also send html button
 

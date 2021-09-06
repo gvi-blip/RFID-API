@@ -4,7 +4,6 @@ const AppError = require('../utilities/appError');
 
 dotenv.config({ path: path.resolve('config.env') });
 const sendErrorDev = (err, res) => {
-  console.log('here in senderrordev');
   res.status(err.statusCode).json({
     status: err.status,
     error: err,
@@ -39,9 +38,9 @@ module.exports = (err, req, res, next) => {
   err.status = err.status || 'error';
   if (process.env.NODE_ENV === 'production') {
     //It is not a good practice to override the arguments of a function
-    console.log(err);
+
     let error = { ...err }; //So a hard copy is created
-    console.log(error);
+
     if (error.code === 'ER_NO_SUCH_TABLE') error = handleTableExistingError();
     if (error.code === 'ER_DUP_ENTRY') error = handleDuplicateEntryError();
 

@@ -15,10 +15,10 @@ dotenv.config({ path: path.resolve('config.env') });
 
 exports.registerUser = catchAsync(async (req, res, next) => {
   //Check if valid email address
-  console.log(validator.isEmail(req.body.email));
   if (!validator.isEmail(req.body.email)) {
     return next(new AppError('Invalid email address', 403));
   }
+
   //Hash password from req body
   const hashedPassowrd = await bcrypt.hash(req.body.password, 10);
 
@@ -32,7 +32,7 @@ exports.registerUser = catchAsync(async (req, res, next) => {
   //Send the complete registeration link with userKey in req.params
   const msgContent = {
     subject: 'API Registeration',
-    text: `Click on the link to register your application.User Key: ${userKey}/n Make sure no one can access this key. All requests to our API from your application will contain this key. ${process.env.completeRegisterationURL}/${userKey}`
+    text: `Click on the link to register your application.User Key: ${userKey} Make sure no one can access this key. All requests to our API from your application will contain this key. ${process.env.completeRegisterationURL}/${userKey}`
   };
   sendEmail(msgContent, req.body.email); //Can also send html button
 
@@ -45,7 +45,7 @@ exports.registerUser = catchAsync(async (req, res, next) => {
 });
 
 exports.completeRegistration = catchAsync(async (req, res, next) => {
-  //MGet user key from database
+  //Get user key from database
   let queryString = `SELECT status,uId FROM APIUSERS WHERE userKey = '${req.params.userKey}'`;
   const results = await query(queryString);
   req.body.apiUserId = results[0].uId;
@@ -56,10 +56,9 @@ exports.completeRegistration = catchAsync(async (req, res, next) => {
     await query(queryString);
     next();
   } else {
+    //Already registered
     return next(new AppError('You are already registered', 400));
   }
-
-  //If registered
 });
 
 exports.createTables = catchAsync(async (req, res, next) => {
@@ -74,9 +73,11 @@ exports.createTables = catchAsync(async (req, res, next) => {
       message: 'User registered successfully'
     });
   } else {
-    res.status(200).json({
-      status: 'fail',
-      message: 'Could not add user.'
-    });
+    return next(
+      new AppError(
+        'User registered but features may not be available. Please contact support for help',
+        500
+      )
+    );
   }
 });

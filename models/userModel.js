@@ -19,7 +19,6 @@ exports.createNewUserTable = async (Id) => {
       return true;
     }
   } catch (err) {
-    console.log(err);
     return false;
   }
 };

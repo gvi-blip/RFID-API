@@ -17,7 +17,6 @@ exports.createNewAPIUsersTable = async () => {
     const queryString = `CREATE TABLE APIUSERS (${queryStringFields})`;
     const results = await query(queryString);
     if (results) {
-      console.log('done');
       return true;
     }
   } catch (err) {
@@ -26,10 +25,10 @@ exports.createNewAPIUsersTable = async () => {
   }
 };
 
-function getRndInteger(min, max) {
-  return Math.floor(Math.random() * (max - min)) + min;
-}
 exports.generateUserKey = () => {
+  function getRndInteger(min, max) {
+    return Math.floor(Math.random() * (max - min)) + min;
+  }
   let string = '';
   const digits = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
   const lowercase = [];

@@ -32,7 +32,7 @@ const handleTableExistingError = () => {
 };
 
 const handleDuplicateEntryError = () => {
-  return new AppError('This data already exists.', 403);
+  return new AppError('This data already exists.', 400);
 };
 module.exports = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;

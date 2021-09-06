@@ -33,6 +33,10 @@ const handleTableExistingError = () => {
 const handleDuplicateEntryError = () => {
   return new AppError('This data already exists.', 400);
 };
+
+const handleEmptyBodyError = () => {
+  return new AppError('Please provide the required data in request body', 400);
+};
 module.exports = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
@@ -40,10 +44,10 @@ module.exports = (err, req, res, next) => {
     //It is not a good practice to override the arguments of a function
 
     let error = { ...err }; //So a hard copy is created
-
+    console.error(error);
     if (error.code === 'ER_NO_SUCH_TABLE') error = handleTableExistingError();
     if (error.code === 'ER_DUP_ENTRY') error = handleDuplicateEntryError();
-
+    if (error.type === 'entity.parse.failed') error = handleEmptyBodyError();
     sendErrorProd(error, res);
   } else {
     sendErrorDev(err, res);

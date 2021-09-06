@@ -27,7 +27,7 @@ const sendErrorProd = (err, res) => {
 };
 
 const handleTableExistingError = () => {
-  return new AppError('Does not exist', 403);
+  return new AppError('Does not exist. Please contact support', 400);
 };
 
 const handleDuplicateEntryError = () => {

@@ -61,15 +61,11 @@ exports.createRecord = catchAsync(async (req, res, next) => {
   //Get designation from rfid field
   let queryString = `SELECT role FROM UD${req.body.apiUserId} WHERE rfidTag = '${req.body.rfidTag}'`;
   let results = await query(queryString);
-  console.log(results);
-  const { role } = results[0].role;
-
+  const role = results[0].role;
   //Get allowed users from access point table
   queryString = `SELECT allowed FROM AP${req.body.apiUserId} WHERE apId = ${req.body.apId}`;
   results = await query(queryString);
   const allowed = results[0].allowed.split(',');
-  console.log(allowed);
-  console.log(allowed.includes(role));
   if (allowed.includes(role)) {
     queryString = `INSERT INTO L${
       req.body.apiUserId

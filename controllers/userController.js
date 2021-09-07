@@ -13,6 +13,9 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
 });
 
 exports.addUser = catchAsync(async (req, res, next) => {
+  if (!req.body.rfidTag) {
+    return next(new AppError('rfidTag required'));
+  }
   const queryString = `INSERT INTO UD${req.body.apiUserId} (name, role, rfidTag) VALUES('${req.body.name}','${req.body.role}','${req.body.rfidTag}')`;
   await query(queryString);
   res.status(200).json({

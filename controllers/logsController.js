@@ -50,7 +50,12 @@ exports.getAllLogs = catchAsync(async (req, res, next) => {
 
 exports.createRecord = catchAsync(async (req, res, next) => {
   //Check if the request bode contains rfidTag and accesspointId
-  if (!req.body.rfidTag || !req.body.apId) {
+  if (
+    !req.body.rfidTag ||
+    !req.body.apId ||
+    req.body.rfidTag === '' ||
+    req.body.apId === ''
+  ) {
     return next(new AppError('Incomplete data', 400));
   }
   //Get designation from rfid field
@@ -63,7 +68,8 @@ exports.createRecord = catchAsync(async (req, res, next) => {
   queryString = `SELECT allowed FROM AP${req.body.apiUserId} WHERE apId = ${req.body.apId}`;
   results = await query(queryString);
   const allowed = results[0].allowed.split(',');
-
+  console.log(allowed);
+  console.log(allowed.includes(role));
   if (allowed.includes(role)) {
     queryString = `INSERT INTO L${
       req.body.apiUserId
@@ -74,11 +80,9 @@ exports.createRecord = catchAsync(async (req, res, next) => {
     res.status(200).json({
       access: 'Granted'
     });
-    next();
   } else {
     res.status(200).json({
       access: 'Denied'
     });
-    next();
   }
 });

@@ -11,8 +11,8 @@ exports.getAllLogs = catchAsync(async (req, res, next) => {
     results = await query(queryString);
     if (results.length > 0) {
       //If userId exists
-      const { name } = results[0].name;
-      const { role } = results[0].role;
+      const name = results[0].name;
+      const role = results[0].role;
       queryString = `SELECT AP${req.body.apiUserId}.name AS AccessPointName,L${req.body.apiUserId}.time FROM((L${req.body.apiUserId} INNER JOIN UD${req.body.apiUserId} ON L${req.body.apiUserId}.rfidTag = UD${req.body.apiUserId}.rfidTag) INNER JOIN AP${req.body.apiUserId} ON L${req.body.apiUserId}.accessPointId = AP${req.body.apiUserId}.apId ) WHERE UD${req.body.apiUserId}.uId = '${req.params.value}'`;
       results = await query(queryString);
       res.status(200).json({
@@ -31,7 +31,7 @@ exports.getAllLogs = catchAsync(async (req, res, next) => {
     results = await query(queryString);
     if (results.length > 0) {
       //If access point exists
-      const { name } = results[0].name;
+      const name = results[0].name;
       queryString = `SELECT UD${req.body.apiUserId}.name AS UserName,UD${req.body.apiUserId}.uId AS userId,UD${req.body.apiUserId}.role,L${req.body.apiUserId}.time FROM((L${req.body.apiUserId} INNER JOIN UD${req.body.apiUserId} ON L${req.body.apiUserId}.rfidTag = UD${req.body.apiUserId}.rfidTag) INNER JOIN AP${req.body.apiUserId} ON L${req.body.apiUserId}.accessPointId = AP${req.body.apiUserId}.apId ) WHERE L${req.body.apiUserId}.accessPointId = '${req.params.value}'`;
       results = await query(queryString);
       res.status(200).json({

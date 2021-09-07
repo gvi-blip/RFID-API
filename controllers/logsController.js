@@ -49,6 +49,10 @@ exports.getAllLogs = catchAsync(async (req, res, next) => {
 });
 
 exports.createRecord = catchAsync(async (req, res, next) => {
+  //Check if the request bode contains rfidTag and accesspointId
+  if (!req.body.rfidTag || !req.body.apId) {
+    return next(new AppError('Incomplete data', 400));
+  }
   //Get designation from rfid field
   let queryString = `SELECT role FROM UD${req.body.apiUserId} WHERE rfidTag = '${req.body.rfidTag}'`;
   let results = await query(queryString);

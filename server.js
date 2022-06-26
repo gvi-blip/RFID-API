@@ -6,7 +6,8 @@ process.on('uncaughtException', (err) => {
   console.log('Uncaught Exception 💥. Shutting down the server');
   console.log(err.name, err.message);
 
-  // process.exit(1); // Code 1. The server shouldn't be left like this but there are tools and cloud providers that automatically restart it
+  // process.exit(1);
+   // Code 1. The server shouldn't be left like this but there are tools and cloud providers that automatically restart it
 });
 
 const app = require('./app');

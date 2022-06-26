@@ -15,7 +15,7 @@ const connectToDb = (connected) => {
     debug:false
   });
 
-  db.connect();
+  // db.connect();
   if (!connected) {
     db.query('SELECT 1 + 1 AS solution', (error, results) => {
       if (error) throw error;
